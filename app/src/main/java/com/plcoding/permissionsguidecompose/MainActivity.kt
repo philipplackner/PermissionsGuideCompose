@@ -38,23 +38,13 @@ class MainActivity : ComponentActivity() {
                 val viewModel = viewModel<MainViewModel>()
                 val dialogQueue = viewModel.visiblePermissionDialogQueue
 
-                val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission(),
-                    onResult = { isGranted ->
-                        viewModel.onPermissionResult(
-                            permission = Manifest.permission.CAMERA,
-                            isGranted = isGranted
-                        )
-                    }
-                )
-
                 val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestMultiplePermissions(),
                     onResult = { perms ->
                         permissionsToRequest.forEach { permission ->
                             viewModel.onPermissionResult(
                                 permission = permission,
-                                isGranted = perms[permission] == true
+                                isNotGranted = perms[permission] == false
                             )
                         }
                     }
@@ -65,13 +55,6 @@ class MainActivity : ComponentActivity() {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Button(onClick = {
-                        cameraPermissionResultLauncher.launch(
-                            Manifest.permission.CAMERA
-                        )
-                    }) {
-                        Text(text = "Request one permission")
-                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = {
                         multiplePermissionResultLauncher.launch(permissionsToRequest)
