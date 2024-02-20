@@ -52,10 +52,12 @@ class MainActivity : ComponentActivity() {
                     contract = ActivityResultContracts.RequestMultiplePermissions(),
                     onResult = { perms ->
                         permissionsToRequest.forEach { permission ->
-                            viewModel.onPermissionResult(
-                                permission = permission,
-                                isGranted = perms[permission] == true
-                            )
+                            if (perms.contains(permission)) {
+                                viewModel.onPermissionResult(
+                                    permission = permission,
+                                    isGranted = perms[permission] == true
+                                )
+                            }
                         }
                     }
                 )
